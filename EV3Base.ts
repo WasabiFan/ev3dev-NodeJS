@@ -57,7 +57,8 @@ enum MotorProperty {
     type,
     speed,
     target_ramp_up_count,
-    uevent
+    uevent,
+    position
 }
 
 enum MotorType {
