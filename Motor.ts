@@ -7,6 +7,7 @@ var base = require("./EV3Base.js");
 var FilePathConstructor = base.FilePathConstructor;
 var MotorPort = base.MotorPort;
 var MotorProperty = base.MotorProperty;
+var MotorType = base.MotorType;
 
 class Motor {
     private port: MotorPort
@@ -16,13 +17,16 @@ class Motor {
     }
 
     get position(): number {
-        var propertyPath: string = FilePathConstructor.motorProperty(this.port, MotorProperty.position);
-        return parseInt(fs.readFileSync(propertyPath).toString());
+        return parseInt(this.readProperty(MotorProperty.position));
+    }
+
+    get type(): string {
+        return this.readProperty(MotorProperty.type);
     }
 
     private readProperty(property: MotorProperty): string {
         var propertyPath: string = FilePathConstructor.motorProperty(this.port, property);
-        return fs.readFileSync(propertyPath).toString().match(/[0-9]+/)[0];
+        return fs.readFileSync(propertyPath).toString().match(/[0-9A-Za-z._]+/)[0];
     }
 
     constructor(port: MotorPort) {

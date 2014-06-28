@@ -60,6 +60,12 @@ enum MotorProperty {
     uevent
 }
 
+enum MotorType {
+    tacho,
+    minitacho
+}
+
 module.exports.FilePathConstructor = FilePathConstructor;
 module.exports.MotorPort = MotorPort;
 module.exports.MotorProperty = MotorProperty;
+module.exports.MotorType = MotorType;
