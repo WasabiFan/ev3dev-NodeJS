@@ -1,6 +1,7 @@
 ﻿/// <reference path="node.d.ts"/>
 /// <reference path="EV3Base.ts"/>
 
+//Require modules and globalize some stuff
 var fs = require("fs");
 var base = require("./EV3Base.js");
 
@@ -11,26 +12,31 @@ var MotorPropertyValidation = base.MotorPropertyValidation;
 var MotorType = base.MotorType;
 var softBoolean = base.softBoolean;
 
+//Class to hold the basic function of the motor
 class Motor {
     private port: MotorPort
 
     //Read-only properties
-    get speed(): number {
+    get speed(): number { //Indication of relative speed
         return parseInt(this.readProperty(MotorProperty.speed));
     }
 
-    get position(): number {
+    get position(): number { //Number of tacho ticks
         return parseInt(this.readProperty(MotorProperty.position));
     }
 
-    get power(): number {
+    get power(): number { //The power being sent to the motor
         return parseInt(this.readProperty(MotorProperty.power));
     }
 
-    get type(): string {
+    get type(): string { //The type of motor
         return this.readProperty(MotorProperty.type);
     }
 
+    /**
+     * Reads the value of a property from the file; includes error handling if the file doesn't exist
+     * @param {MotorProperty} property The property to read
+     */
     private readProperty(property: MotorProperty): string {
         var propertyPath: string = FilePathConstructor.motorProperty(this.port, property);
         if (fs.existsSync(propertyPath))
@@ -41,7 +47,7 @@ class Motor {
 
     //Writable properties
 
-    get targetSpeed(): number {
+    get targetSpeed(): number { //The speed_setpoint
         return parseInt(this.readProperty(MotorProperty.speed_setpoint));
     }
 
@@ -49,6 +55,10 @@ class Motor {
         this.writeProperty(MotorProperty.speed_setpoint, value);
     }
 
+    /**
+     * Writes a value for a property.
+     * Checks the input against the validation params specified for each property; will throw if the input isn't valid.
+     */
     private writeProperty(property: MotorProperty, value: any) {
         var propertySpec = MotorPropertyValidation[property];
 
@@ -86,6 +96,9 @@ class Motor {
             throw new Error('The property file could not be found. Either the specified motor is not available or the property does not exist.');
     }
 
+    /**
+     * Starts the motor.
+     */
     public run(options: motorRunOptions) {
         for (var i in defaultMotorRunOptions)
             if (options[i] == undefined)

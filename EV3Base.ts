@@ -2,6 +2,9 @@
 var fs = require("fs");
 var path = require('path');
 
+/**
+ * A module to handle path creation from known properties
+ */
 module FilePathConstructor {
     var motorDeviceDir: string = '/sys/class/tacho-motor/';
     var motorDirName: string = 'out{0}:motor:tacho';
@@ -15,6 +18,7 @@ module FilePathConstructor {
     }
 }
 
+//Extend the string prototype
 interface String {
     format(...args: any[]): string
 }
@@ -29,6 +33,9 @@ String.prototype.format = function () {
     });
 };
 
+/**
+ * Takes any of the logical ways to express a boolean and normalizes them.
+ */
 function softBoolean(value: any, falseValue?: any, trueValue?: any) : boolean{
     switch (value) {
         case 0:        
