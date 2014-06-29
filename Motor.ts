@@ -66,20 +66,20 @@ class Motor {
     }
 
     //holdMode: Will actively hold the motor position after it stops
-    get holdMode(): string {
+    get holdMode(): any {
         return this.readProperty(MotorProperty.hold_mode);
     }
 
-    set holdMode(value: string) {
+    set holdMode(value: any) {
         this.writeProperty(MotorProperty.hold_mode, softBoolean(value, 'off', 'on'));
     }
 
     //brakeMode: Will reverse the motor direction when it stops
-    get brakeMode(): string {
+    get brakeMode(): any {
         return this.readProperty(MotorProperty.brake_mode);
     }
 
-    set brakeMode(value: string) {
+    set brakeMode(value: any) {
         this.writeProperty(MotorProperty.brake_mode, softBoolean(value, 'off', 'on'));
     }
 
@@ -137,9 +137,32 @@ class Motor {
         this.writeProperty(MotorProperty.speed_setpoint, options.targetSpeed);
     }
 
+    /**
+     * Stops the motor by reversing the direction
+     */
     public brake() {
         this.holdMode = false;
         this.brakeMode = true; 
+
+        this.runMotor({ run: false });
+    }
+
+    /**
+     * Stops the motor and actively holds it in place
+     */
+    public hold() {
+        this.holdMode = true;
+        this.brakeMode = false;
+
+        this.runMotor({ run: false });
+    }
+
+    /**
+     * Turns off the motor but allows it to coast
+     */
+    public coast() {
+        this.holdMode = false;
+        this.brakeMode = false;
 
         this.runMotor({ run: false });
     }
@@ -150,9 +173,9 @@ class Motor {
 }
 
 interface motorRunOptions {
-    targetSpeed: number //equates to speed_setpoint. Default: 0
-    run: any //will accept numbers 0 and 1, strings 'off' and 'on', and booleans true and false. Default: true
-    regulationMode: any //will accept numbers 0 and 1, strings 'off' and 'on', and booleans true and false. Default: false
+    targetSpeed?: number //equates to speed_setpoint. Default: 0
+    run?: any //will accept numbers 0 and 1, strings 'off' and 'on', and booleans true and false. Default: true
+    regulationMode?: any //will accept numbers 0 and 1, strings 'off' and 'on', and booleans true and false. Default: false
 
 }
 
