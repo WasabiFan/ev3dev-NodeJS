@@ -47,7 +47,7 @@ class Motor {
 
     //Writable properties
 
-    //tarhetSpeed: The speed_setpoint
+    //targetSpeed: The speed_setpoint
     get targetSpeed(): number { 
         return parseInt(this.readProperty(MotorProperty.speed_setpoint));
     }
@@ -56,22 +56,31 @@ class Motor {
         this.writeProperty(MotorProperty.speed_setpoint, value);
     }
 
+    //run: enables the motors. any type.
+    get run(): number {
+        return parseInt(this.readProperty(MotorProperty.run));
+    }
+
+    set run(value: number) {
+        this.writeProperty(MotorProperty.run, softBoolean(value, 0, 1));
+    }
+
     //holdMode: Will actively hold the motor position after it stops
     get holdMode(): string {
         return this.readProperty(MotorProperty.hold_mode);
     }
 
     set holdMode(value: string) {
-        this.writeProperty(MotorProperty.hold_mode, value);
+        this.writeProperty(MotorProperty.hold_mode, softBoolean(value, 'off', 'on'));
     }
 
-    //breakMode: Will reverse the motor direction when it stops
-    get breakMode(): string {
-        return this.readProperty(MotorProperty.break_mode);
+    //brakeMode: Will reverse the motor direction when it stops
+    get brakeMode(): string {
+        return this.readProperty(MotorProperty.brake_mode);
     }
 
-    set breakMode(value: string) {
-        this.writeProperty(MotorProperty.break_mode, value);
+    set brakeMode(value: string) {
+        this.writeProperty(MotorProperty.brake_mode, softBoolean(value, 'off', 'on'));
     }
 
     /**
@@ -118,7 +127,7 @@ class Motor {
     /**
      * Starts the motor.
      */
-    public run(options: motorRunOptions) {
+    public runMotor(options: motorRunOptions) {
         for (var i in defaultMotorRunOptions)
             if (options[i] == undefined)
                 options[i] = defaultMotorRunOptions[i];
@@ -126,6 +135,13 @@ class Motor {
         this.writeProperty(MotorProperty.regulation_mode, softBoolean(options.regulationMode, 'off', 'on'));
         this.writeProperty(MotorProperty.run, softBoolean(options.run,0,1));
         this.writeProperty(MotorProperty.speed_setpoint, options.targetSpeed);
+    }
+
+    public brake() {
+        this.holdMode = false;
+        this.brakeMode = true; 
+
+        this.runMotor({ run: false });
     }
 
     constructor(port: MotorPort) {
