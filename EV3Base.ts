@@ -9,12 +9,20 @@ module FilePathConstructor {
     var motorDeviceDir: string = '/sys/class/tacho-motor/';
     var motorDirName: string = 'out{0}:motor:tacho';
 
+    var ledDeviceDir: string = '/sys/class/leds/';
+    var ledDirName: string = 'ev3:{0}:{1}';
+
     export function motor(port: MotorPort) {
         return path.join(motorDeviceDir, motorDirName.format(MotorPort[port]), '/');
     }
 
     export function motorProperty(port: MotorPort, property: MotorProperty) {
         return path.join(motor(port), MotorProperty[property]);
+    }
+
+    export function ledBrightness(position: ledPosition, color: ledUnitColor) {
+
+        return path.join(ledDeviceDir, ledDirName.format(ledUnitColor[color], ledPosition[position]), '/brightness');
     }
 }
 
@@ -101,9 +109,29 @@ enum MotorType {
     minitacho
 }
 
+enum ledPosition {
+    left,
+    right
+}
+
+enum ledUnitColor {
+    green,
+    red
+}
+
+enum ledColorSetting {
+    green,
+    amber,
+    red,
+    off
+}
+
 module.exports.FilePathConstructor = FilePathConstructor;
 module.exports.MotorPort = MotorPort;
 module.exports.MotorProperty = MotorProperty;
 module.exports.MotorType = MotorType;
 module.exports.MotorPropertyValidation = MotorPropertyValidation;
 module.exports.softBoolean = softBoolean;
+module.exports.ledUnitColor = ledUnitColor;
+module.exports.ledColorSetting = ledColorSetting;
+module.exports.ledPosition = ledPosition;
