@@ -47,12 +47,31 @@ class Motor {
 
     //Writable properties
 
-    get targetSpeed(): number { //The speed_setpoint
+    //tarhetSpeed: The speed_setpoint
+    get targetSpeed(): number { 
         return parseInt(this.readProperty(MotorProperty.speed_setpoint));
     }
 
     set targetSpeed(value: number) {
         this.writeProperty(MotorProperty.speed_setpoint, value);
+    }
+
+    //holdMode: Will actively hold the motor position after it stops
+    get holdMode(): string {
+        return this.readProperty(MotorProperty.hold_mode);
+    }
+
+    set holdMode(value: string) {
+        this.writeProperty(MotorProperty.hold_mode, value);
+    }
+
+    //breakMode: Will reverse the motor direction when it stops
+    get breakMode(): string {
+        return this.readProperty(MotorProperty.break_mode);
+    }
+
+    set breakMode(value: string) {
+        this.writeProperty(MotorProperty.break_mode, value);
     }
 
     /**
