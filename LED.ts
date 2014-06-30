@@ -93,5 +93,3 @@ class LedState {
 }
 
 module.exports = LED;
-module.exports.ledColorSetting = base.ledColorSetting;
-module.exports.ledPosition = base.ledPosition

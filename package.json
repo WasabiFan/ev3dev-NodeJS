@@ -1,0 +1,16 @@
+{
+	"name": "ev3dev",
+	"version": "0.1.0",
+	"description": "An interface to control an EV3 running ev3dev from JavaScript.",
+	"keywords": ["ev3dev"],
+	"homepage": "http://github.com/WasabiFan/ev3dev-NodeJS",
+	"bugs": {"url": "http://github.com/WasabiFan/ev3dev-NodeJS/issues"},
+	"author": {"name": "WasabiFan", "email": "WasabiFan@outlook.com"},
+	
+	"files": ["EV3Base.js", "LED.js", "Motor.js", "Index.js"],
+	"main": "Index.js",
+	"repository" :
+	  { "type" : "git",
+	    "url" : "http://github.com/WasabiFan/ev3dev-NodeJS.git"
+	  }
+}

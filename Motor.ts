@@ -186,4 +186,3 @@ var defaultMotorRunOptions = {
 }
 
 module.exports = Motor;
-module.exports.MotorPort = base.MotorPort;
