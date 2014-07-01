@@ -65,6 +65,12 @@ enum MotorPort {
     A, B, C, D
 }
 
+enum MotorRunMode {
+    forever,
+    time,
+    position
+}
+
 enum MotorProperty {
     brake_mode,
     hold_mode,
@@ -94,6 +100,7 @@ var MotorPropertyValidation = {
     0: { type: 'string', values: ['on', 'off'] }, //brake_mode
     1: { type: 'string', values: ['on', 'off'] }, //hold_mode
     2: { type: 'number', min: -2147483648, max: 2147483648 }, //position
+    3: { type: 'number', min: -2147483648, max: 2147483648 }, //position_setpoint
     7: { type: 'string', values: ['forever', 'time', 'position'] }, //run_mode
     8: { type: 'number', min: -100, max: 100 }, //speed_setpoint
     10: { type: 'string', values: ['tacho', 'minitacho'] }, //type
@@ -101,6 +108,7 @@ var MotorPropertyValidation = {
     16: { type: 'string', values: ['on', 'off'] }, //regulation_mode
     17: { type: 'number', values: [0, 1] }, //run
     18: { type: 'number', min: -100, max: 100 }, //speed
+    20: { type: 'number', min: 0 } //time_setpoint
 
 }
 
@@ -108,6 +116,7 @@ class motorRunOptions {
     targetSpeed: number; //equates to speed_setpoint. Default: 0
     run: any; //will accept numbers 0 and 1, strings 'off' and 'on', and booleans true and false. Default: true
     regulationMode: any; //will accept numbers 0 and 1, strings 'off' and 'on', and booleans true and false. Default: false
+    time: number; //Time to run in milliseconds
 
     constructor(targetSpeed?: number, run?: any, regulationMode?: any) {
         this.targetSpeed = targetSpeed;
@@ -148,3 +157,4 @@ module.exports.ledUnitColor = ledUnitColor;
 module.exports.ledColorSetting = ledColorSetting;
 module.exports.ledPosition = ledPosition;
 module.exports.motorRunOptions = motorRunOptions;
+module.exports.MotorRunMode = MotorRunMode;

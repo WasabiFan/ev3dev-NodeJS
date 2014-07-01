@@ -12,6 +12,7 @@ var MotorPropertyValidation = base.MotorPropertyValidation;
 var MotorType = base.MotorType;
 var softBoolean = base.softBoolean;
 var motorRunOptions = base.motorRunOptions;
+var MotorRunMode = base.MotorRunMode;
 
 //Class to hold the basic function of the motor
 class Motor {
@@ -133,9 +134,30 @@ class Motor {
             if (options[i] == undefined)
                 options[i] = defaultMotorRunOptions[i];
 
+        if (options.time != undefined) {
+            this.writeProperty(MotorProperty.run_mode, MotorRunMode[MotorRunMode.time]);
+            this.writeProperty(MotorProperty.time_setpoint, options.time);
+        }
+
         this.writeProperty(MotorProperty.regulation_mode, softBoolean(options.regulationMode, 'off', 'on'));
-        this.writeProperty(MotorProperty.run, softBoolean(options.run,0,1));
         this.writeProperty(MotorProperty.speed_setpoint, options.targetSpeed);
+        this.writeProperty(MotorProperty.run, softBoolean(options.run, 0, 1));
+
+    }
+
+    /**
+     * Runs the motor to a specified position. Works well with holdMode and brakeMode.
+     */
+    public runServo(position: number, speed: number, absolute?: boolean) {
+        this.writeProperty(MotorProperty.run, 0);
+        this.writeProperty(MotorProperty.speed_setpoint, speed);
+        this.writeProperty(MotorProperty.regulation_mode, 'on');
+
+        if (!absolute)
+            this.writeProperty(MotorProperty.position, 0);
+
+        this.writeProperty(MotorProperty.position_setpoint, position);
+        this.writeProperty(MotorProperty.run, 1);
     }
 
     /**
@@ -153,7 +175,7 @@ class Motor {
      */
     public hold() {
         this.holdMode = true;
-        this.brakeMode = false;
+        this.brakeMode = true;
 
         this.startMotor({ run: false });
     }
@@ -176,7 +198,8 @@ class Motor {
 var defaultMotorRunOptions = {
     targetSpeed: 0,
     run: 1,
-    regulationMode: false
+    regulationMode: false,
+    time: undefined
 }
 
 module.exports = Motor;

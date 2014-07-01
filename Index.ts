@@ -10,3 +10,4 @@ module.exports.MotorPort = base.MotorPort;
 module.exports.ledColorSetting = base.ledColorSetting;
 module.exports.ledPosition = base.ledPosition;
 module.exports.motorRunOptions = base.motorRunOptions;
+module.exports.MotorRunMode = base.MotorRunMode;
