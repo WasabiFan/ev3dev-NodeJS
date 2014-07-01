@@ -7,6 +7,8 @@ We currently support:
 
 - Motors
   - Run forever
+  - Run time
+  - Run servo/position
 - LEDs
 
 Motors
@@ -26,7 +28,6 @@ setTimeout(function () {
     motorA.coast();
 }, 5000);
 ```
-Simple, right? Learn more about the Motor APIs on the Wiki.
 
 LEDs
 ----
@@ -42,4 +43,7 @@ var rightLED = new ev3.LED(ev3.ledPosition.right);
 leftLED.color = ev3.ledColorSetting.green;
 rightLED.color = ev3.ledColorSetting.red;
 ```
-More docs are also on the Wiki.
+
+
+
+Simple, right? Learn more about the [Motor](https://github.com/WasabiFan/ev3dev-NodeJS/wiki/Motors) and [LED](https://github.com/WasabiFan/ev3dev-NodeJS/wiki/LEDs) APIs on the Wiki.
