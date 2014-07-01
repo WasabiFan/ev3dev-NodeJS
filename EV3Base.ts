@@ -104,6 +104,18 @@ var MotorPropertyValidation = {
 
 }
 
+class motorRunOptions {
+    targetSpeed: number; //equates to speed_setpoint. Default: 0
+    run: any; //will accept numbers 0 and 1, strings 'off' and 'on', and booleans true and false. Default: true
+    regulationMode: any; //will accept numbers 0 and 1, strings 'off' and 'on', and booleans true and false. Default: false
+
+    constructor(targetSpeed?: number, run?: any, regulationMode?: any) {
+        this.targetSpeed = targetSpeed;
+        this.run = run;
+        this.regulationMode = regulationMode;
+    }
+}
+
 enum MotorType {
     tacho,
     minitacho
@@ -135,3 +147,4 @@ module.exports.softBoolean = softBoolean;
 module.exports.ledUnitColor = ledUnitColor;
 module.exports.ledColorSetting = ledColorSetting;
 module.exports.ledPosition = ledPosition;
+module.exports.motorRunOptions = motorRunOptions;

@@ -19,7 +19,7 @@ var ev3 = require('ev3dev');
 var motorA = new ev3.Motor(ev3.MotorPort.A);
 
 //Run the motor at 60% power
-motorA.runMotor({ targetSpeed: 60 });
+motorA.startMotor({ targetSpeed: 60 });
 
 //Wait five seconds before turning off the motor and letting it coast
 setTimeout(function () {

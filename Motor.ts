@@ -11,6 +11,7 @@ var MotorProperty = base.MotorProperty;
 var MotorPropertyValidation = base.MotorPropertyValidation;
 var MotorType = base.MotorType;
 var softBoolean = base.softBoolean;
+var motorRunOptions = base.motorRunOptions;
 
 //Class to hold the basic function of the motor
 class Motor {
@@ -127,7 +128,7 @@ class Motor {
     /**
      * Starts the motor.
      */
-    public runMotor(options: motorRunOptions) {
+    public startMotor(options: motorRunOptions) {
         for (var i in defaultMotorRunOptions)
             if (options[i] == undefined)
                 options[i] = defaultMotorRunOptions[i];
@@ -144,7 +145,7 @@ class Motor {
         this.holdMode = false;
         this.brakeMode = true; 
 
-        this.runMotor({ run: false });
+        this.startMotor({ run: false });
     }
 
     /**
@@ -154,7 +155,7 @@ class Motor {
         this.holdMode = true;
         this.brakeMode = false;
 
-        this.runMotor({ run: false });
+        this.startMotor({ run: false });
     }
 
     /**
@@ -164,19 +165,12 @@ class Motor {
         this.holdMode = false;
         this.brakeMode = false;
 
-        this.runMotor({ run: false });
+        this.startMotor({ run: false });
     }
 
     constructor(port: MotorPort) {
         this.port = port;
     }
-}
-
-interface motorRunOptions {
-    targetSpeed?: number //equates to speed_setpoint. Default: 0
-    run?: any //will accept numbers 0 and 1, strings 'off' and 'on', and booleans true and false. Default: true
-    regulationMode?: any //will accept numbers 0 and 1, strings 'off' and 'on', and booleans true and false. Default: false
-
 }
 
 var defaultMotorRunOptions = {
