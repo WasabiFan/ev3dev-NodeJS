@@ -148,16 +148,27 @@ class Motor {
     /**
      * Runs the motor to a specified position. Works well with holdMode and brakeMode.
      */
-    public runServo(position: number, speed: number, absolute?: boolean) {
+    public runServo(options: any) {
         this.writeProperty(MotorProperty.run, 0);
-        this.writeProperty(MotorProperty.speed_setpoint, speed);
+        this.writeProperty(MotorProperty.speed_setpoint, options.speed);
         this.writeProperty(MotorProperty.regulation_mode, 'on');
 
-        if (!absolute)
+        if (!options.absolute)
             this.writeProperty(MotorProperty.position, 0);
 
-        this.writeProperty(MotorProperty.position_setpoint, position);
+        this.writeProperty(MotorProperty.position_setpoint, options.position);
         this.writeProperty(MotorProperty.run, 1);
+
+        if (options.completeBehavior) {
+            switch (options.completeBehavior) {
+                case 'hold':
+                    this.holdMode = true;
+                case 'brake':
+                    this.brakeMode = true;
+                    break;
+                    
+            }
+        }
     }
 
     /**
