@@ -1,6 +1,8 @@
 ﻿/// <reference path="node.d.ts"/>
+/// <reference path="linq.d.ts"/>
 var fs = require("fs");
 var path = require('path');
+var Enumerable = require('linq');
 
 /**
  * A module to handle path creation from known properties
@@ -8,6 +10,9 @@ var path = require('path');
 module FilePathConstructor {
     var motorDeviceDir: string = '/sys/class/tacho-motor/';
     var motorDirName: string = 'out{0}:motor:tacho';
+
+    var sensorDeviceDir: string = '/sys/class/msensor';
+    var sensorDirName: string = 'sensor{0}';
 
     var ledDeviceDir: string = '/sys/class/leds/';
     var ledDirName: string = 'ev3:{0}:{1}';
@@ -20,8 +25,29 @@ module FilePathConstructor {
         return path.join(motor(port), MotorProperty[property]);
     }
 
-    export function ledBrightness(position: ledPosition, color: ledUnitColor) {
+    export function sensorNumber(port: number) {
+        if (!fs.existsSync(sensorDeviceDir))
+            throw new Error('The sensor class directory does not exist.');
 
+        var sensorFile = Enumerable.from(fs.readdirSync(sensorDeviceDir))
+            .firstOrDefault(file => fs.readFileSync(
+                path.join(sensorDeviceDir, '/', file, '/port_name')
+                ).toString()
+                .indexOf('in' + port) == 0);
+
+        return sensorFile.match(/[0-9]+/)[0];
+    }
+
+    export function sensor(sensorNumber: number) {
+        return path.join(sensorDeviceDir, sensorDirName.format(sensorNumber), '/');
+    }
+
+    export function sensorProperty(sensorNumber: number, property: string) {
+        return path.join(sensor(sensorNumber), property);
+    }
+
+
+    export function ledBrightness(position: ledPosition, color: ledUnitColor) {
         return path.join(ledDeviceDir, ledDirName.format(ledUnitColor[color], ledPosition[position]), '/brightness');
     }
 }
@@ -44,17 +70,17 @@ String.prototype.format = function () {
 /**
  * Takes any of the logical ways to express a boolean and normalizes them.
  */
-function softBoolean(value: any, falseValue?: any, trueValue?: any) : boolean{
+function softBoolean(value: any, falseValue?: any, trueValue?: any): boolean {
     switch (value) {
-        case 0:        
+        case 0:
         case 'off':
         case false:
-            return falseValue == undefined? false : falseValue;
+            return falseValue == undefined ? false : falseValue;
 
         case 1:
         case 'on':
         case true:
-            return trueValue == undefined? true : trueValue;
+            return trueValue == undefined ? true : trueValue;
 
         default:
             return undefined;
