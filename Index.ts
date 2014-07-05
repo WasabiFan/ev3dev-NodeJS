@@ -6,7 +6,7 @@ var Sensors = require("./Sensors/Sensor.js");
 
 module.exports.Motor = Motor;
 module.exports.LED = LED;
-module.exports.AnalogSensor = Sensors.AnalogSensor;
+module.exports.GenericSensor = Sensors.GenericSensor;
 
 module.exports.MotorPort = base.MotorPort;
 module.exports.ledColorSetting = base.ledColorSetting;

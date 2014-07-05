@@ -8,22 +8,28 @@ var base = require("../EV3Base.js");
 var FilePathConstructor = base.FilePathConstructor;
 var softBoolean = base.softBoolean;
 
-class AnalogSensor {
+class GenericSensor {
     sensorPort: number;
     sensorIndex: number;
+    numValues: number;
 
     constructor(sensorPort: number) {
         this.sensorPort = sensorPort;
         this.sensorIndex = FilePathConstructor.sensorNumber(sensorPort);
+
+        var numValuesProperty: string = FilePathConstructor.sensorProperty(this.sensorIndex, 'num_values');
+
+        if (fs.exists(numValuesProperty))
+            this.numValues = fs.readFileSync(numValuesProperty).toString().match(/[0-9A-Za-z._]+/)[0];
     }
 
-    get analogValue(): number {
-        var propertyPath: string = FilePathConstructor.sensorProperty(this.sensorIndex, 'value0');
-        if (fs.existsSync(propertyPath))
+    public getValue(valueN: number) {
+        var propertyPath: string = FilePathConstructor.sensorProperty(this.sensorIndex, 'value' + valueN);
+        if (valueN < this.numValues && fs.existsSync(propertyPath))
             return fs.readFileSync(propertyPath).toString().match(/[0-9A-Za-z._]+/)[0];
         else
             throw new Error('The property file could not be found. Either the specified motor is not available or the property does not exist.');
-    }
+    }       
 }
 
-module.exports.AnalogSensor = AnalogSensor;
+module.exports.GenericSensor = GenericSensor;
