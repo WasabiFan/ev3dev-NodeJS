@@ -35,6 +35,10 @@ class Motor {
         return this.readProperty(MotorProperty.type);
     }
 
+    get state(): string { //The state of the motor
+        return this.readProperty(MotorProperty.state);
+    }
+
     /**
      * Reads the value of a property from the file; includes error handling if the file doesn't exist
      * @param {MotorProperty} property The property to read
@@ -45,6 +49,15 @@ class Motor {
             return fs.readFileSync(propertyPath).toString().match(/[0-9A-Za-z._]+/)[0];
         else
             throw new Error('The property file could not be found. Either the specified motor is not available or the property does not exist.');
+    }
+
+    /**
+     * Gets a file hook for a property
+     */
+    private hookProperty(property: MotorProperty, hookListener) {
+        var propertyPath: string = FilePathConstructor.motorProperty(this.port, property);
+        if (fs.existsSync(propertyPath))
+            return fs.watch(propertyPath, {}, hookListener);
     }
 
     //Writable properties
@@ -143,6 +156,14 @@ class Motor {
         this.writeProperty(MotorProperty.speed_setpoint, options.targetSpeed);
         this.writeProperty(MotorProperty.run, softBoolean(options.run, 0, 1));
 
+        if (options.complete) {
+            this.hookProperty(MotorProperty.state, function (change, filename) {
+                if (this.readProperty(MotorProperty.state) == 'idle') {
+                    options.complete();
+                }
+            });
+        }
+
     }
 
     /**
@@ -168,6 +189,14 @@ class Motor {
                     break;
                     
             }
+        }
+
+        if (options.complete) {
+            this.hookProperty(MotorProperty.state, function (change, filename) {
+                if (this.readProperty(MotorProperty.state) == 'idle') {
+                    options.complete();
+                }
+            });
         }
     }
 
