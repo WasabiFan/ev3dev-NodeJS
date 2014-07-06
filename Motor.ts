@@ -16,7 +16,8 @@ var MotorRunMode = base.MotorRunMode;
 
 //Class to hold the basic function of the motor
 class Motor {
-    private port: MotorPort
+    private port: MotorPort;
+    private index: number;
 
     //Read-only properties
     get speed(): number { //Indication of relative speed
@@ -40,7 +41,7 @@ class Motor {
      * @param {MotorProperty} property The property to read
      */
     private readProperty(property: MotorProperty): string {
-        var propertyPath: string = FilePathConstructor.motorProperty(this.port, property);
+        var propertyPath: string = FilePathConstructor.motorProperty(this.index, property);
         if (fs.existsSync(propertyPath))
             return fs.readFileSync(propertyPath).toString().match(/[0-9A-Za-z._]+/)[0];
         else
@@ -118,7 +119,7 @@ class Motor {
                 break;
         }
 
-        var propertyPath: string = FilePathConstructor.motorProperty(this.port, property);
+        var propertyPath: string = FilePathConstructor.motorProperty(this.index, property);
 
         if (fs.existsSync(propertyPath))
             return fs.writeFileSync(propertyPath, value);
@@ -203,6 +204,7 @@ class Motor {
 
     constructor(port: MotorPort) {
         this.port = port;
+        this.index = FilePathConstructor.motorIndex(port);
     }
 }
 
