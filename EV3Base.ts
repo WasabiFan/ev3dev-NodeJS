@@ -13,17 +13,16 @@ module FilePathConstructor {
     var ledDeviceDir: string = '/sys/class/leds/';
     var ledDirName: string = 'ev3:{0}:{1}';
 
-    export function motorNumber(port: MotorPort) {
+    export function motorIndex(port: MotorPort) {
         if (!fs.existsSync(motorDeviceDir))
             throw new Error('The motor class directory does not exist.');
 
 
         var motorFile = Enumerable.from(fs.readdirSync(motorDeviceDir))
             .firstOrDefault(file => fs.readFileSync(
-                path.join(motorDeviceDir, '/', file, '/port_name')
+                path.join(motorDeviceDir, file, '/port_name')
                 ).toString()
-                .indexOf('out' + port) == 0);
-
+                .indexOf('out' + MotorPort[port]) == 0);
 
         return motorFile.match(/[0-9]+/)[0];
     }
@@ -142,19 +141,6 @@ var MotorPropertyValidation = {
 
 }
 
-class motorRunOptions {
-    targetSpeed: number; //equates to speed_setpoint. Default: 0
-    run: any; //will accept numbers 0 and 1, strings 'off' and 'on', and booleans true and false. Default: true
-    regulationMode: any; //will accept numbers 0 and 1, strings 'off' and 'on', and booleans true and false. Default: false
-    time: number; //Time to run in milliseconds
-
-    constructor(targetSpeed?: number, run?: any, regulationMode?: any) {
-        this.targetSpeed = targetSpeed;
-        this.run = run;
-        this.regulationMode = regulationMode;
-    }
-}
-
 enum MotorType {
     tacho,
     minitacho
@@ -186,5 +172,4 @@ module.exports.softBoolean = softBoolean;
 module.exports.ledUnitColor = ledUnitColor;
 module.exports.ledColorSetting = ledColorSetting;
 module.exports.ledPosition = ledPosition;
-module.exports.motorRunOptions = motorRunOptions;
 module.exports.MotorRunMode = MotorRunMode;

@@ -36,6 +36,10 @@ class Motor {
         return this.readProperty(MotorProperty.type);
     }
 
+    private scale(value: number, oldMin: number, oldMax: number, newMin: number, newMax: number): number {
+        return ((value - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
+    }
+
     /**
      * Reads the value of a property from the file; includes error handling if the file doesn't exist
      * @param {MotorProperty} property The property to read
@@ -50,13 +54,29 @@ class Motor {
 
     //Writable properties
 
-    //targetSpeed: The speed_setpoint
+    //targetSpeed: The speed setpoint
     get targetSpeed(): number { 
-        return parseInt(this.readProperty(MotorProperty.speed_setpoint));
+        if (this.regulationMode == 'on') {
+            switch (this.type) {
+                case MotorType[MotorType.tacho]:
+                    return this.scale(this.readProperty(MotorProperty.pulses_per_second), -900, 900, -100, 100);
+                case MotorType[MotorType.minitacho]:
+                    return this.scale(this.readProperty(MotorProperty.pulses_per_second), -1200, 1200, -100, 100);
+            }
+        }
     }
 
     set targetSpeed(value: number) {
-        this.writeProperty(MotorProperty.speed_setpoint, value);
+        if (this.regulationMode == 'on') {
+            switch (this.type) {
+                case MotorType[MotorType.tacho]:
+                    this.writeProperty(MotorProperty.pulses_per_second_sp, parseInt(this.scale(value, -100, 100, -900, 900)));
+                    break;
+                case MotorType[MotorType.minitacho]:
+                    this.writeProperty(MotorProperty.pulses_per_second_sp, parseInt(this.scale(value, -100, 100, -1200, 1200)));
+                    break;
+            }
+        }
     }
 
     //run: enables the motors. any type.
@@ -68,22 +88,25 @@ class Motor {
         this.writeProperty(MotorProperty.run, softBoolean(value, 0, 1));
     }
 
-    //holdMode: Will actively hold the motor position after it stops
-    get holdMode(): any {
-        return this.readProperty(MotorProperty.hold_mode);
+    //regulationMode
+    get regulationMode(): number {
+        return parseInt(this.readProperty(MotorProperty.regulation_mode));
     }
 
-    set holdMode(value: any) {
-        this.writeProperty(MotorProperty.hold_mode, softBoolean(value, 'off', 'on'));
+    set regulationMode(value: number) {
+        if (this.run)
+            this.writeProperty(MotorProperty.regulation_mode, softBoolean(value, 'off', 'on'));
+        else
+            throw new Error('You must stop the motor before changing the regulation mode.');
     }
 
-    //brakeMode: Will reverse the motor direction when it stops
-    get brakeMode(): any {
-        return this.readProperty(MotorProperty.brake_mode);
+    //stopMode: Choses how to stop the motor
+    get stopMode(): string {
+        return this.readProperty(MotorProperty.stop_mode);
     }
 
-    set brakeMode(value: any) {
-        this.writeProperty(MotorProperty.brake_mode, softBoolean(value, 'off', 'on'));
+    set stopMode(value: string) {
+        this.writeProperty(MotorProperty.stop_mode, value);
     }
 
     /**
@@ -92,7 +115,6 @@ class Motor {
      */
     private writeProperty(property: MotorProperty, value: any) {
         var propertySpec = MotorPropertyValidation[property];
-
         switch (propertySpec.type) {
             case 'number':
                 if (isNaN(value))
@@ -100,11 +122,11 @@ class Motor {
 
                 if (typeof propertySpec.min != 'undefined')
                     if (value < propertySpec.min)
-                        throw new Error('The specified value must be greater than or equal to' + propertySpec.min + '.');
+                        throw new Error('The specified value must be greater than or equal to ' + propertySpec.min + '. Property: ' + MotorProperty[property]);
 
                 if (typeof propertySpec.max != 'undefined')
                     if (value > propertySpec.max)
-                        throw new Error('The specified value must be less than or equal to' + propertySpec.max + '.');
+                        throw new Error('The specified value must be less than or equal to ' + propertySpec.max + '. Property: ' + MotorProperty[property]);
 
                 if (typeof propertySpec.values != 'undefined')
                     if (propertySpec.values.indexOf(value) == -1)
@@ -130,54 +152,70 @@ class Motor {
     /**
      * Starts the motor.
      */
-    public startMotor(options: motorRunOptions) {
+    public startMotor(options: any) {
         for (var i in defaultMotorRunOptions)
             if (options[i] == undefined)
                 options[i] = defaultMotorRunOptions[i];
 
         if (options.time != undefined) {
             this.writeProperty(MotorProperty.run_mode, MotorRunMode[MotorRunMode.time]);
-            this.writeProperty(MotorProperty.time_setpoint, options.time);
+            this.writeProperty(MotorProperty.time_sp, options.time);
         }
+        else
+            this.writeProperty(MotorProperty.run_mode, MotorRunMode[MotorRunMode.forever])
 
         this.writeProperty(MotorProperty.regulation_mode, softBoolean(options.regulationMode, 'off', 'on'));
-        this.writeProperty(MotorProperty.speed_setpoint, options.targetSpeed);
-        this.writeProperty(MotorProperty.run, softBoolean(options.run, 0, 1));
 
+        if (softBoolean(options.regulationMode)) {
+            switch (this.type) {
+                case MotorType[MotorType.tacho]:
+                    this.writeProperty(MotorProperty.pulses_per_second_sp, parseInt(this.scale(options.targetSpeed, -100, 100, -900, 900)));
+                    break;
+                case MotorType[MotorType.minitacho]:
+                    this.writeProperty(MotorProperty.pulses_per_second_sp, parseInt(this.scale(options.targetSpeed, -100, 100, -1200, 1200)));
+                    break;
+            }
+        }
+        else
+            this.writeProperty(MotorProperty.duty_cycle_sp, options.targetSpeed);
+
+        this.writeProperty(MotorProperty.stop_mode, options.stopMode);
+        this.writeProperty(MotorProperty.run, softBoolean(options.run, 0, 1));
     }
 
     /**
      * Runs the motor to a specified position. Works well with holdMode and brakeMode.
      */
     public runServo(options: any) {
+        for (var i in defaultServoRunOptions)
+            if (options[i] == undefined)
+                options[i] = defaultServoRunOptions[i];
+
         this.writeProperty(MotorProperty.run, 0);
-        this.writeProperty(MotorProperty.speed_setpoint, options.speed);
+
+        switch (this.type) {
+            case MotorType[MotorType.tacho]:
+                this.writeProperty(MotorProperty.pulses_per_second_sp, parseInt(this.scale(options.targetSpeed, -100, 100, -900, 900)));
+                break;
+            case MotorType[MotorType.minitacho]:
+                this.writeProperty(MotorProperty.pulses_per_second_sp, parseInt(this.scale(options.targetSpeed, -100, 100, -1200, 1200)));
+                break;
+        }
+
         this.writeProperty(MotorProperty.regulation_mode, 'on');
 
-        if (!options.absolute)
-            this.writeProperty(MotorProperty.position, 0);
+        this.writeProperty(MotorProperty.position_mode, options.positionMode);
 
-        this.writeProperty(MotorProperty.position_setpoint, options.position);
+        this.writeProperty(MotorProperty.position_sp, options.position);
+        this.writeProperty(MotorProperty.stop_mode, options.stopMode);
         this.writeProperty(MotorProperty.run, 1);
-
-        if (options.completeBehavior) {
-            switch (options.completeBehavior) {
-                case 'hold':
-                    this.holdMode = true;
-                case 'brake':
-                    this.brakeMode = true;
-                    break;
-                    
-            }
-        }
     }
 
     /**
      * Stops the motor by reversing the direction
      */
     public brake() {
-        this.holdMode = false;
-        this.brakeMode = true; 
+        this.stopMode = 'brake';
 
         this.startMotor({ run: false });
     }
@@ -186,8 +224,7 @@ class Motor {
      * Stops the motor and actively holds it in place
      */
     public hold() {
-        this.holdMode = true;
-        this.brakeMode = true;
+        this.stopMode = 'hold';
 
         this.startMotor({ run: false });
     }
@@ -196,8 +233,7 @@ class Motor {
      * Turns off the motor but allows it to coast
      */
     public coast() {
-        this.holdMode = false;
-        this.brakeMode = false;
+        this.stopMode = 'coast';
 
         this.startMotor({ run: false });
     }
@@ -212,7 +248,15 @@ var defaultMotorRunOptions = {
     targetSpeed: 0,
     run: 1,
     regulationMode: false,
-    time: undefined
+    time: undefined,
+    stopMode: 'coast'
+}
+
+var defaultServoRunOptions = {
+    targetSpeed: 30,
+    positionMode: 'relative',
+    position: 0,
+    stopMode: 'coast'
 }
 
 module.exports = Motor;
