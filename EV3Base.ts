@@ -82,7 +82,12 @@ function softBoolean(value: any, falseValue?: any, trueValue?: any) : boolean{
 
 module.exports.debugLog = function (text: string, ...args: any[]) {
     if (DEBUG) {
-        console.log("DEBUG: " + text.format(args));
+        console.log("DEBUG: " + text.replace(/{(\d+)}/g, function (match, i) {
+            return typeof args[i] != 'undefined'
+                ? (typeof args[i] == 'object' ? JSON.stringify(args[i]) : args[i])
+                : match
+                ;
+        }));
     }
 }
 
