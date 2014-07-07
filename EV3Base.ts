@@ -1,23 +1,42 @@
 ﻿/// <reference path="node.d.ts"/>
 var fs = require("fs");
 var path = require('path');
+var Enumerable = require('linq');
+
+//Debug settings
+DEBUG = true;
 
 /**
  * A module to handle path creation from known properties
  */
 module FilePathConstructor {
     var motorDeviceDir: string = '/sys/class/tacho-motor/';
-    var motorDirName: string = 'out{0}:motor:tacho';
+    var motorDirName: string = 'tacho-motor{0}';
 
     var ledDeviceDir: string = '/sys/class/leds/';
     var ledDirName: string = 'ev3:{0}:{1}';
 
-    export function motor(port: MotorPort) {
-        return path.join(motorDeviceDir, motorDirName.format(MotorPort[port]), '/');
+    export function motorIndex(port: MotorPort) {
+        if (!fs.existsSync(motorDeviceDir))
+            throw new Error('The motor class directory does not exist.');
+
+
+        var motorFile = Enumerable.from(fs.readdirSync(motorDeviceDir))
+            .firstOrDefault(file => fs.readFileSync(
+                path.join(motorDeviceDir, file, '/port_name')
+                ).toString()
+                .indexOf('out' + MotorPort[port]) == 0);
+
+        return motorFile.match(/[0-9]+/)[0];
     }
 
-    export function motorProperty(port: MotorPort, property: MotorProperty) {
-        return path.join(motor(port), MotorProperty[property]);
+
+    export function motor(index: number) {
+        return path.join(motorDeviceDir, motorDirName.format(index), '/');
+    }
+
+    export function motorProperty(index: number, property: MotorProperty) {
+        return path.join(motor(index), MotorProperty[property]);
     }
 
     export function ledBrightness(position: ledPosition, color: ledUnitColor) {
@@ -61,6 +80,17 @@ function softBoolean(value: any, falseValue?: any, trueValue?: any) : boolean{
     }
 }
 
+module.exports.debugLog = function (text: string, ...args: any[]) {
+    if (DEBUG) {
+        console.log("DEBUG: " + text.replace(/{(\d+)}/g, function (match, i) {
+            return typeof args[i] != 'undefined'
+                ? (typeof args[i] == 'object' ? JSON.stringify(args[i]) : args[i])
+                : match
+                ;
+        }));
+    }
+}
+
 enum MotorPort {
     A, B, C, D
 }
@@ -72,57 +102,57 @@ enum MotorRunMode {
 }
 
 enum MotorProperty {
-    brake_mode,
-    hold_mode,
-    position,
-    position_setpoint,
-    pulses_per_second,
-    ramp_up,
-    reset,
-    run_mode,
-    speed_setpoint,
+    uevent,
     subsystem,
-    type,
     device,
-    polarity_mode,
-    position_mode,
-    power,
-    ramp_down,
-    regulation_mode,
-    run,
-    speed,
+    port_name,
+    type,
+    position,
     state,
-    time_setpoint,
-    uevent
+    duty_cycle,
+    pulses_per_second,
+    duty_cycle_sp,
+    pulses_per_second_sp,
+    time_sp,
+    position_sp,
+    run_mode,
+    regulation_mode,
+    stop_modes,
+    stop_mode,
+    position_mode,
+    polarity_mode,
+    ramp_up_sp,
+    ramp_down_sp,
+    speed_regulation_P,
+    speed_regulation_I,
+    speed_regulation_D,
+    speed_regulation_K,
+    run,
+    estop,
+    reset,
 }
 
 var MotorPropertyValidation = {
-    0: { type: 'string', values: ['on', 'off'] }, //brake_mode
-    1: { type: 'string', values: ['on', 'off'] }, //hold_mode
-    2: { type: 'number', min: -2147483648, max: 2147483648 }, //position
-    3: { type: 'number', min: -2147483648, max: 2147483648 }, //position_setpoint
-    7: { type: 'string', values: ['forever', 'time', 'position'] }, //run_mode
-    8: { type: 'number', min: -100, max: 100 }, //speed_setpoint
-    10: { type: 'string', values: ['tacho', 'minitacho'] }, //type
-    14: { type: 'number', min: -100, max: 100 }, //power
-    16: { type: 'string', values: ['on', 'off'] }, //regulation_mode
-    17: { type: 'number', values: [0, 1] }, //run
-    18: { type: 'number', min: -100, max: 100 }, //speed
-    20: { type: 'number', min: 0 } //time_setpoint
+    4: { type: 'string', values: ['tacho', 'minitacho'] }, //type
+    5: { type: 'number', min: -2147483648, max: 2147483648 }, //position
+    9: { type: 'number', min: -100, max: 100 }, //duty_cycle_sp
+    10: { type: 'number', min: -2000, max: 2000 }, //pulses_per_second_sp
+    11: { type: 'number', min: 0 }, //time_sp
+    12: { type: 'number', min: -2147483648, max: 2147483648 }, //position_sp
+    13: { type: 'string', values: ['forever', 'time', 'position'] }, //run_mode
+    14: { type: 'string', values: ['on', 'off'] }, //regulation_mode
+    16: { type: 'string', values: ['coast', 'brake', 'hold'] }, //stop_mode
+    17: { type: 'string', values: ['absolute', 'relative'] }, //position_mode
+    18: { type: 'string', values: ['positive', 'negative'] },//polarity_mode
+    25: { type: 'number', values: [0, 1] }, //run
+    19: { type: 'number' }, //ramp_up_sp
+    20: { type: 'number' }, //ramp_down_sp
+    21: { type: 'number' }, //speed_regulation_P
+    22: { type: 'number' }, //speed_regulation_I
+    23: { type: 'number' }, //speed_regulation_D
+    24: { type: 'number' }, //speed_regulation_K
 
-}
 
-class motorRunOptions {
-    targetSpeed: number; //equates to speed_setpoint. Default: 0
-    run: any; //will accept numbers 0 and 1, strings 'off' and 'on', and booleans true and false. Default: true
-    regulationMode: any; //will accept numbers 0 and 1, strings 'off' and 'on', and booleans true and false. Default: false
-    time: number; //Time to run in milliseconds
-
-    constructor(targetSpeed?: number, run?: any, regulationMode?: any) {
-        this.targetSpeed = targetSpeed;
-        this.run = run;
-        this.regulationMode = regulationMode;
-    }
 }
 
 enum MotorType {
@@ -156,5 +186,4 @@ module.exports.softBoolean = softBoolean;
 module.exports.ledUnitColor = ledUnitColor;
 module.exports.ledColorSetting = ledColorSetting;
 module.exports.ledPosition = ledPosition;
-module.exports.motorRunOptions = motorRunOptions;
 module.exports.MotorRunMode = MotorRunMode;
