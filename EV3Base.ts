@@ -3,6 +3,9 @@ var fs = require("fs");
 var path = require('path');
 var Enumerable = require('linq');
 
+//Debug settings
+DEBUG = true;
+
 /**
  * A module to handle path creation from known properties
  */
@@ -74,6 +77,17 @@ function softBoolean(value: any, falseValue?: any, trueValue?: any) : boolean{
 
         default:
             return undefined;
+    }
+}
+
+module.exports.debugLog = function (text: string, ...args: any[]) {
+    if (DEBUG) {
+        console.log("DEBUG: " + text.replace(/{(\d+)}/g, function (match, i) {
+            return typeof args[i] != 'undefined'
+                ? (typeof args[i] == 'object' ? JSON.stringify(args[i]) : args[i])
+                : match
+                ;
+        }));
     }
 }
 

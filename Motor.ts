@@ -46,6 +46,9 @@ class Motor {
      */
     private readProperty(property: MotorProperty): string {
         var propertyPath: string = FilePathConstructor.motorProperty(this.index, property);
+
+        base.debugLog('READING PROPERTY {0}', propertyPath);
+
         if (fs.existsSync(propertyPath))
             return fs.readFileSync(propertyPath).toString().match(/[0-9A-Za-z._]+/)[0];
         else
@@ -143,6 +146,8 @@ class Motor {
 
         var propertyPath: string = FilePathConstructor.motorProperty(this.index, property);
 
+        base.debugLog('WRITING PROPERTY {0}', propertyPath);
+
         if (fs.existsSync(propertyPath))
             return fs.writeFileSync(propertyPath, value);
         else
@@ -153,6 +158,8 @@ class Motor {
      * Starts the motor.
      */
     public startMotor(options: any) {
+        base.debugLog('STARTING MOTOR {0},{1} with options {2}', MotorPort[this.port], this.index, options);
+
         for (var i in defaultMotorRunOptions)
             if (options[i] == undefined)
                 options[i] = defaultMotorRunOptions[i];
@@ -187,6 +194,7 @@ class Motor {
      * Runs the motor to a specified position. Works well with holdMode and brakeMode.
      */
     public runServo(options: any) {
+        base.debugLog('RUNNING SERVO {0},{1} with options {2}', MotorPort[this.port], this.index, options);
         for (var i in defaultServoRunOptions)
             if (options[i] == undefined)
                 options[i] = defaultServoRunOptions[i];
@@ -241,6 +249,8 @@ class Motor {
     constructor(port: MotorPort) {
         this.port = port;
         this.index = FilePathConstructor.motorIndex(port);
+
+        base.debugLog('MOTOR CREATED at index {0} on port {1}', this.index, MotorPort[this.port]);
     }
 }
 
