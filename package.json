@@ -1,6 +1,6 @@
 {
 	"name": "ev3dev",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "An interface to control an EV3 running ev3dev from JavaScript.",
 	"keywords": ["ev3dev"],
 	"homepage": "http://github.com/WasabiFan/ev3dev-NodeJS",
