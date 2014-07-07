@@ -6,7 +6,9 @@
 	"homepage": "http://github.com/WasabiFan/ev3dev-NodeJS",
 	"bugs": {"url": "http://github.com/WasabiFan/ev3dev-NodeJS/issues"},
 	"author": {"name": "WasabiFan", "email": "WasabiFan@outlook.com"},
-	
+
+
+	"dependencies": {"linq": "3.x"},
 	"files": ["EV3Base.js", "LED.js", "Motor.js", "Index.js", "README.md"],
 	"main": "Index.js",
 	"repository" :
