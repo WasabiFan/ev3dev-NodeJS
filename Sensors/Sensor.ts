@@ -28,7 +28,7 @@ class GenericSensor {
         if (valueN < this.numValues && fs.existsSync(propertyPath))
             return fs.readFileSync(propertyPath).toString().match(/[0-9A-Za-z._]+/)[0];
         else
-            throw new Error('The property file could not be found. Either the specified motor is not available or the property does not exist.');
+            throw new Error('The property file could not be found. Either the specified sensor is not available or the property does not exist.');
     }       
 }
 
