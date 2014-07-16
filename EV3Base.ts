@@ -4,7 +4,7 @@ var path = require('path');
 var Enumerable = require('linq');
 
 //Debug settings
-DEBUG = true;
+DEBUG = false;
 
 /**
  * A module to handle path creation from known properties
