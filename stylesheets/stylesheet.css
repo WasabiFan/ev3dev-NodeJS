@@ -331,25 +331,27 @@ Full-Width Styles
   text-indent: -5000px;
   overflow: hidden;
   background: url(../images/sprite_download.png) no-repeat bottom left;
+  margin-left: 10px;
 }
 
-.tar_download_link {
+.npm_download_link {
   display: block;
   float: right;
   width: 90px;
   height:70px;
   text-indent: -5000px;
   overflow: hidden;
-  background: url(../images/sprite_download.png) no-repeat bottom right;
-  margin-left: 10px;
+  background: url(http://www.npmjs.org/static/img/npm.png) no-repeat center;
+  background-size: 90%;
+  margin-left:5px;
 }
 
 .zip_download_link:hover {
   background: url(../images/sprite_download.png) no-repeat top left;
 }
 
-.tar_download_link:hover {
-  background: url(../images/sprite_download.png) no-repeat top right;
+.npm_download_link:hover {
+    background-size: 100%;
 }
 
 #main_content_wrap {

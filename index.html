@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 
-  <head>
+<head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
     <meta name="description" content="ev3dev-nodejs : ev3dev API language bindings for NodeJS" />
@@ -9,54 +9,59 @@
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
     <title>ev3dev-nodejs</title>
-  </head>
+</head>
 
-  <body>
+<body>
 
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-          <a id="forkme_banner" href="https://github.com/WasabiFan/ev3dev-NodeJS">View on GitHub</a>
+            <a id="forkme_banner" href="https://github.com/WasabiFan/ev3dev-NodeJS">View on GitHub</a>
 
-          <h1 id="project_title">ev3dev-nodejs</h1>
-          <h2 id="project_tagline">ev3dev API language bindings for NodeJS</h2>
+            <h1 id="project_title">ev3dev-nodejs</h1>
+            <h2 id="project_tagline">ev3dev API language bindings for nodejs</h2>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/WasabiFan/ev3dev-NodeJS/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/WasabiFan/ev3dev-NodeJS/tarball/master">Download this project as a tar.gz file</a>
+                <a class="npm_download_link" href="https://www.npmjs.org/package/ev3dev">Download the module from NPM</a>
+                <a class="zip_download_link" href="https://github.com/WasabiFan/ev3dev-NodeJS/zipball/master">Download the source TypeScript files as a .zip file</a>
             </section>
         </header>
     </div>
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>
-<a name="ev3dev-nodejs" class="anchor" href="#ev3dev-nodejs"><span class="octicon octicon-link"></span></a>ev3dev-NodeJS</h1>
+        <section id="main_content" class="inner">
+            <h1>
+                <a name="ev3dev-nodejs" class="anchor" href="#ev3dev-nodejs"><span class="octicon octicon-link"></span></a>ev3dev-NodeJS
+            </h1>
 
-<p>ev3dev-NodeJS is a NodeJS module that exposes the features of the ev3dev API. Your brick must be running <a href="http://github.com/mindboards/ev3dev">ev3dev</a> and must have NodeJS installed.</p>
+            <p>ev3dev-NodeJS is a nodejs module that lets you program your Lego EV3 brick with JavaScript. It uses a custom kernel called <a href="http://github.com/mindboards/ev3dev">ev3dev</a>, so it won't work with the out-of-the-box Lego kernel.</p>
 
-<p>We currently support:</p>
+            <p>Although our goal is to support all of the functions of the EV3, we currently have implimented support for:</p>
 
-<ul>
-<li>Motors
+            <ul>
+                <li>
+                    Motors
 
-<ul>
-<li>Run forever</li>
-<li>Run time</li>
-<li>Run servo/position</li>
-</ul>
-</li>
-<li>LEDs</li>
-</ul><h2>
-<a name="motors" class="anchor" href="#motors"><span class="octicon octicon-link"></span></a>Motors</h2>
+                    <ul>
+                        <li>Run forever</li>
+                        <li>Run for time</li>
+                        <li>Run servo/position</li>
+                    </ul>
+                </li>
+                <li>LEDs</li>
+            </ul>
+
+            <p>We also have experimental support for some sensors in the sensors branch.</p>
+
+            <h2>
+                <a name="motors" class="anchor" href="#motors"><span class="octicon octicon-link"></span></a>Using motors
+            </h2>
 
 <pre><code>//Require the module
 var ev3 = require('ev3dev');
-
 //Create the motor on port A
 var motorA = new ev3.Motor(ev3.MotorPort.A);
-
 //Run the motor at 60% power for five seconds, and then hold it in place
 motorA.startMotor({ 
     targetSpeed: 60,
@@ -65,34 +70,32 @@ motorA.startMotor({
 });
 </code></pre>
 
-<h2>
-<a name="leds" class="anchor" href="#leds"><span class="octicon octicon-link"></span></a>LEDs</h2>
+            <h2>
+                <a name="leds" class="anchor" href="#leds"><span class="octicon octicon-link"></span></a>Using LEDs
+            </h2>
 
 <pre><code>//Require the module
 var ev3 = require('ev3dev');
-
 //Initialize both LEDs
 var leftLED = new ev3.LED(ev3.ledPosition.left);
 var rightLED = new ev3.LED(ev3.ledPosition.right);
-
 //Set their color
 leftLED.color = ev3.ledColorSetting.green;
 rightLED.color = ev3.ledColorSetting.red;
 </code></pre>
 
-<p>Simple, right? Learn more about the <a href="https://github.com/WasabiFan/ev3dev-NodeJS/wiki/Motors">Motor</a> and <a href="https://github.com/WasabiFan/ev3dev-NodeJS/wiki/LEDs">LED</a> APIs on the Wiki.</p>
-      </section>
+            <p>Simple, right? Learn more about the <a href="https://github.com/WasabiFan/ev3dev-NodeJS/wiki/Motors">Motor</a> and <a href="https://github.com/WasabiFan/ev3dev-NodeJS/wiki/LEDs">LED</a> APIs on the Wiki.</p>
+        </section>
     </div>
 
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">ev3dev-nodejs maintained by <a href="https://github.com/WasabiFan">WasabiFan</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
+        <footer class="inner">
+            <p class="copyright">ev3dev-nodejs maintained by <a href="https://github.com/WasabiFan">WasabiFan</a></p>
+        </footer>
     </div>
 
-    
 
-  </body>
+
+</body>
 </html>
