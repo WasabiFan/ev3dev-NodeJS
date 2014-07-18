@@ -20,16 +20,8 @@ class Motor {
     private index: number;
 
     //Read-only properties
-    get speed(): number { //Indication of relative speed
-        return parseInt(this.readProperty(MotorProperty.speed));
-    }
-
     get position(): number { //Number of tacho ticks
         return parseInt(this.readProperty(MotorProperty.position));
-    }
-
-    get power(): number { //The power being sent to the motor
-        return parseInt(this.readProperty(MotorProperty.power));
     }
 
     get type(): string { //The type of motor
@@ -83,11 +75,11 @@ class Motor {
     }
 
     //run: enables the motors. any type.
-    get run(): number {
-        return parseInt(this.readProperty(MotorProperty.run));
+    get run(): any {
+        return !!parseInt(this.readProperty(MotorProperty.run));
     }
 
-    set run(value: number) {
+    set run(value: any) {
         this.writeProperty(MotorProperty.run, softBoolean(value, 0, 1));
     }
 
@@ -120,6 +112,7 @@ class Motor {
         var propertySpec = MotorPropertyValidation[property];
         switch (propertySpec.type) {
             case 'number':
+                //console.log(typeof value + ', ' + value);
                 if (isNaN(value))
                     throw new Error('The specified value is not a number.');
 
