@@ -9,6 +9,8 @@ We currently support:
   - Run forever
   - Run time
   - Run servo/position
+- Sensors
+  - Generic read support
 - LEDs
 
 Motors
