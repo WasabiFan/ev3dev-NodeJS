@@ -3,7 +3,7 @@
 	"version": "0.2.3",
 	"description": "An interface to control an EV3 running ev3dev from JavaScript.",
 	"keywords": ["ev3dev"],
-	"homepage": "http://github.com/WasabiFan/ev3dev-NodeJS",
+	"homepage": "http://wasabifan.github.io/ev3dev-NodeJS/",
 	"bugs": {"url": "http://github.com/WasabiFan/ev3dev-NodeJS/issues"},
 	"author": {"name": "WasabiFan", "email": "WasabiFan@outlook.com"},
 
