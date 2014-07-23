@@ -1,7 +1,7 @@
 ﻿/// <reference path="node.d.ts"/>
 /// <reference path="EV3Base.ts"/>
 
-//Require modules and globalize some stuff
+// Require modules and globalize some stuff
 var fs = require("fs");
 var base = require("./EV3Base.js");
 
@@ -61,7 +61,7 @@ class LED {
             return new LedState(
                 !!String.fromCharCode(fs.readFileSync(redPropertyPath)[0]),
                 !!String.fromCharCode(fs.readFileSync(greenPropertyPath)[0])
-            );
+                );
         else
             throw new Error('The file could not be found.');
     }

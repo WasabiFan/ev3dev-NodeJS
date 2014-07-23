@@ -8,7 +8,7 @@ var base = require("./EV3Base.js");
 var FilePathConstructor = base.FilePathConstructor;
 var MotorPort = base.MotorPort;
 var MotorProperty = base.MotorProperty;
-var MotorPropertyValidation = base.MotorPropertyValidation;
+var MotorPropertyValidation: any = base.MotorPropertyValidation;
 var MotorType = base.MotorType;
 var softBoolean = base.softBoolean;
 var motorRunOptions = base.motorRunOptions;
@@ -50,8 +50,8 @@ class Motor {
     //Writable properties
 
     //targetSpeed: The speed setpoint
-    get targetSpeed(): number { 
-        if (this.regulationMode == 'on') {
+    get targetSpeed(): number {
+        if (this.regulationMode == 1) {
             switch (this.type) {
                 case MotorType[MotorType.tacho]:
                     return this.scale(this.readProperty(MotorProperty.pulses_per_second), -900, 900, -100, 100);
@@ -62,13 +62,13 @@ class Motor {
     }
 
     set targetSpeed(value: number) {
-        if (this.regulationMode == 'on') {
+        if (this.regulationMode == 1) {
             switch (this.type) {
                 case MotorType[MotorType.tacho]:
-                    this.writeProperty(MotorProperty.pulses_per_second_sp, parseInt(this.scale(value, -100, 100, -900, 900)));
+                    this.writeProperty(MotorProperty.pulses_per_second_sp, this.scale(value, -100, 100, -900, 900));
                     break;
                 case MotorType[MotorType.minitacho]:
-                    this.writeProperty(MotorProperty.pulses_per_second_sp, parseInt(this.scale(value, -100, 100, -1200, 1200)));
+                    this.writeProperty(MotorProperty.pulses_per_second_sp, this.scale(value, -100, 100, -1200, 1200));
                     break;
             }
         }
@@ -169,10 +169,10 @@ class Motor {
         if (softBoolean(options.regulationMode)) {
             switch (this.type) {
                 case MotorType[MotorType.tacho]:
-                    this.writeProperty(MotorProperty.pulses_per_second_sp, parseInt(this.scale(options.targetSpeed, -100, 100, -900, 900)));
+                    this.writeProperty(MotorProperty.pulses_per_second_sp, this.scale(options.targetSpeed, -100, 100, -900, 900));
                     break;
                 case MotorType[MotorType.minitacho]:
-                    this.writeProperty(MotorProperty.pulses_per_second_sp, parseInt(this.scale(options.targetSpeed, -100, 100, -1200, 1200)));
+                    this.writeProperty(MotorProperty.pulses_per_second_sp, this.scale(options.targetSpeed, -100, 100, -1200, 1200));
                     break;
             }
         }
@@ -196,10 +196,10 @@ class Motor {
 
         switch (this.type) {
             case MotorType[MotorType.tacho]:
-                this.writeProperty(MotorProperty.pulses_per_second_sp, parseInt(this.scale(options.targetSpeed, -100, 100, -900, 900)));
+                this.writeProperty(MotorProperty.pulses_per_second_sp, this.scale(options.targetSpeed, -100, 100, -900, 900));
                 break;
             case MotorType[MotorType.minitacho]:
-                this.writeProperty(MotorProperty.pulses_per_second_sp, parseInt(this.scale(options.targetSpeed, -100, 100, -1200, 1200)));
+                this.writeProperty(MotorProperty.pulses_per_second_sp, this.scale(options.targetSpeed, -100, 100, -1200, 1200));
                 break;
         }
 

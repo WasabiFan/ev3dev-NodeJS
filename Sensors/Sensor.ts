@@ -18,7 +18,7 @@ class GenericSensor {
         this.sensorIndex = FilePathConstructor.sensorNumber(sensorPort);
 
         var numValuesProperty: string = FilePathConstructor.sensorProperty(this.sensorIndex, 'num_values');
-        
+
         if (fs.existsSync(numValuesProperty))
             this.numValues = fs.readFileSync(numValuesProperty).toString().match(/[0-9A-Za-z._]+/)[0];
     }
@@ -35,34 +35,34 @@ class GenericSensor {
     get modes(): string[] {
         return this.sterilePropertyRead('modes').split(' ');
     }
-    
+
     //Get the current sensor mode
     get mode(): string {
-        return this.sterilePropertyRead('mode'); 
-    }  
-    
-    private sterilePropertyRead(property) {
+        return this.sterilePropertyRead('mode');
+    }
+
+    private sterilePropertyRead(property: string): string {
         var propertyPath: string = FilePathConstructor.sensorProperty(this.sensorIndex, property);
 
         if (fs.existsSync(propertyPath))
             return fs.readFileSync(propertyPath).toString().replace('\n', '');
         else
             throw new Error('The property file could not be found. Either the specified sensor is not available or the property does not exist.');
-    }  
+    }
 
     //Set the sensor mode
     set mode(value: string) {
         this.sterilePropertyWrite('mode', value);
-    } 
+    }
 
-    private sterilePropertyWrite(property, value) {
+    private sterilePropertyWrite(property: string, value: any) {
         var propertyPath: string = FilePathConstructor.sensorProperty(this.sensorIndex, property);
 
         if (fs.existsSync(propertyPath))
             fs.writeFileSync(propertyPath, value);
         else
             throw new Error('The property file could not be found. Either the specified sensor is not available or the property does not exist.');
-    } 
+    }
 }
 
 module.exports.GenericSensor = GenericSensor;

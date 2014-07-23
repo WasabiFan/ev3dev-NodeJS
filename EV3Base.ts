@@ -2,10 +2,10 @@
 /// <reference path="linq.d.ts"/>
 var fs = require("fs");
 var path = require('path');
-var Enumerable = require('linq');
+var Enumerable: linqjs.EnumerableStatic = require('linq');
 
 //Debug settings
-DEBUG = false;
+var DEBUG = false;
 
 /**
  * A module to handle path creation from known properties
@@ -76,7 +76,7 @@ interface String {
 }
 
 String.prototype.format = function () {
-    var args = arguments;
+    var args: IArguments = arguments;
     return this.replace(/{(\d+)}/g, function (match, number) {
         return typeof args[number] != 'undefined'
             ? args[number]
@@ -157,7 +157,7 @@ enum MotorProperty {
     reset,
 }
 
-var MotorPropertyValidation = {
+var MotorPropertyValidation: any = {
     4: { type: 'string', values: ['tacho', 'minitacho'] }, //type
     5: { type: 'number', min: -2147483648, max: 2147483648 }, //position
     9: { type: 'number', min: -100, max: 100 }, //duty_cycle_sp
