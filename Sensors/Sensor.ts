@@ -1,5 +1,4 @@
 ﻿/// <reference path="../node.d.ts"/>
-/// <reference path="../EV3Base.ts"/>
 
 //Require modules and globalize some stuff
 var fs = require("fs");
@@ -23,25 +22,40 @@ class GenericSensor {
             this.numValues = fs.readFileSync(numValuesProperty).toString().match(/[0-9A-Za-z._]+/)[0];
     }
 
-    public getValue(valueN: number) {
+    public getValue(valueN: number): string {
+        var val;
 
         if (valueN < this.numValues)
-            return this.sterilePropertyRead('value' + valueN).match(/[0-9A-Za-z._]+/)[0];
+            val = this.readProperty('value' + valueN);
         else
             throw new Error('The value index must be less than ' + this.numValues);
+
+        val = val.match(/[0-9A-Za-z._]+/)[0]
+
+        var dpVal = val / Math.pow(10, parseInt(this.readProperty('dp')));
+
+        if (!isNaN(dpVal))
+            return dpVal;
+
+        return val;
     }
 
     //Get the possible sensor modes
     get modes(): string[] {
-        return this.sterilePropertyRead('modes').split(' ');
+        return this.readProperty('modes').split(' ');
     }
 
     //Get the current sensor mode
     get mode(): string {
-        return this.sterilePropertyRead('mode');
+        return this.readProperty('mode');
     }
 
-    private sterilePropertyRead(property: string): string {
+    //Get the sensor type_id
+    get typeId(): string {
+        return this.readProperty('type_id');
+    }
+
+    private readProperty(property: string): string {
         var propertyPath: string = FilePathConstructor.sensorProperty(this.sensorIndex, property);
 
         if (fs.existsSync(propertyPath))
@@ -52,12 +66,12 @@ class GenericSensor {
 
     //Set the sensor mode
     set mode(value: string) {
-        this.sterilePropertyWrite('mode', value);
+        this.writeProperty('mode', value);
     }
 
-    private sterilePropertyWrite(property: string, value: any) {
+    private writeProperty(property: string, value: any) {
         var propertyPath: string = FilePathConstructor.sensorProperty(this.sensorIndex, property);
-
+        
         if (fs.existsSync(propertyPath))
             fs.writeFileSync(propertyPath, value);
         else
@@ -65,4 +79,4 @@ class GenericSensor {
     }
 }
 
-module.exports.GenericSensor = GenericSensor;
+module.exports = GenericSensor;

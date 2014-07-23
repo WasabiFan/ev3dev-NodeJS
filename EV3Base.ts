@@ -91,13 +91,17 @@ String.prototype.format = function () {
 function softBoolean(value: any, falseValue?: any, trueValue?: any): boolean {
     switch (value) {
         case 0:
+        case '0':
         case 'off':
         case false:
+        case 'false':
             return falseValue == undefined ? false : falseValue;
 
         case 1:
+        case '1':
         case 'on':
         case true:
+        case 'true':
             return trueValue == undefined ? true : trueValue;
 
         default:
