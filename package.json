@@ -1,6 +1,6 @@
 {
 	"name": "ev3dev",
-	"version": "0.2.3",
+	"version": "0.3.1",
 	"description": "An interface to control an EV3 running ev3dev from JavaScript.",
 	"keywords": ["ev3dev"],
 	"homepage": "http://wasabifan.github.io/ev3dev-NodeJS/",
@@ -8,7 +8,7 @@
 	"author": {"name": "WasabiFan", "email": "WasabiFan@outlook.com"},
 	
 	"dependencies": {"linq": "3.x"},
-	"files": ["EV3Base.js", "LED.js", "Motor.js", "Index.js", "README.md"],
+	"files": ["EV3Base.js", "LED.js", "Motor.js", "Index.js", "README.md", "Sensors/Sensor.js", "Sensors/SimpleSensors.js"],
 	"main": "Index.js",
 	"repository" :
 	  { "type" : "git",

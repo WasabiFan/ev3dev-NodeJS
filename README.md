@@ -13,6 +13,8 @@ We currently support:
   - Generic read support
 - LEDs
 
+**NOTE**: This library should be treated like an alpha release. The APIs are still changing rapidly, and the functionality cannot be fully tested until the codebase is more stable. 
+
 Motors
 ------
 ```
